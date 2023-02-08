@@ -1,0 +1,14 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/neuvector-certified-operator.openshift-operators: ""
+  name: neuvector-certified-operator
+  namespace: openshift-operators
+spec:
+  channel: beta
+  installPlanApproval: Manual
+  name: neuvector-certified-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: neuvector-operator.v1.3.7

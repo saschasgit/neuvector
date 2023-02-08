@@ -1,0 +1,220 @@
+apiVersion: apm.neuvector.com/v1alpha1
+kind: Neuvector
+metadata:
+  annotations:
+    operator-sdk/primary-resource: /neuvector-binding-nvwafsecurityrules
+    operator-sdk/primary-resource-type: ClusterRoleBinding.rbac.authorization.k8s.io
+  name: neuvector
+  namespace: openshift-operators
+spec:
+  docker:
+    enabled: false
+    path: /var/run/docker.sock
+  crdwebhook:
+    enabled: true
+    type: ClusterIP
+  containerd:
+    enabled: false
+    path: /var/run/containerd/containerd.sock
+  imagePullSecrets: ''
+  resources: {}
+  k3s:
+    enabled: false
+    runtimePath: /run/k3s/containerd/containerd.sock
+  psp: false
+  manager:
+    svc:
+      annotations: {}
+      loadBalancerIP: ''
+      type: NodePort
+    nodeSelector: {}
+    enabled: true
+    podLabels: {}
+    resources: {}
+    affinity: {}
+    runAsUser: ''
+    route:
+      enabled: true
+      host: ''
+      termination: passthrough
+      tls: ''
+    env:
+      ssl: true
+    ingress:
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      enabled: false
+      host: ''
+      ingressClassName: ''
+      path: /
+      secretName: ''
+      tls: false
+    certificate:
+      keyFile: tls.key
+      pemFile: tls.pem
+      secret: ''
+    image: registry.connect.redhat.com/neuvector/manager
+    tolerations: []
+    priorityClassName: ''
+    podAnnotations: {}
+  admissionwebhook:
+    type: ClusterIP
+  enforcer:
+    enabled: true
+    image: registry.connect.redhat.com/neuvector/enforcer
+    podAnnotations: {}
+    podLabels: {}
+    priorityClassName: ''
+    resources: {}
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+    updateStrategy:
+      type: RollingUpdate
+  cve:
+    scanner:
+      nodeSelector: {}
+      enabled: true
+      podLabels: {}
+      resources: {}
+      dockerPath: ''
+      affinity: {}
+      runAsUser: ''
+      strategy:
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate
+      image: registry.connect.redhat.com/neuvector/scanner
+      replicas: 3
+      tolerations: []
+      priorityClassName: ''
+      podAnnotations: {}
+    updater:
+      nodeSelector: {}
+      enabled: true
+      podLabels: {}
+      runAsUser: ''
+      schedule: 0 0 * * *
+      secure: false
+      image: registry.access.redhat.com/ubi8
+      priorityClassName: ''
+      podAnnotations: {}
+  rbac: true
+  crio:
+    enabled: true
+    path: /var/run/crio/crio.sock
+  oem: ''
+  openshift: true
+  serviceAccount: default
+  bottlerocket:
+    enabled: false
+    runtimePath: /run/dockershim.sock
+  controller:
+    nodeSelector: {}
+    enabled: true
+    federation:
+      managedsvc:
+        annotations: {}
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+          enabled: false
+          host: ''
+          ingressClassName: ''
+          path: /
+          secretName: ''
+          tls: false
+        route:
+          enabled: false
+          host: ''
+          termination: passthrough
+          tls: ''
+        type: ''
+      mastersvc:
+        annotations: {}
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+          enabled: false
+          host: ''
+          ingressClassName: ''
+          path: /
+          secretName: ''
+          tls: false
+        route:
+          enabled: false
+          host: ''
+          termination: passthrough
+          tls: ''
+        type: ''
+    podLabels: {}
+    annotations: {}
+    resources: {}
+    schedulerName: ''
+    apisvc:
+      annotations: {}
+      route:
+        enabled: false
+        host: ''
+        termination: passthrough
+        tls: ''
+      type: ''
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - neuvector-controller-pod
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+    env: []
+    secret:
+      data: {}
+      enabled: false
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      type: RollingUpdate
+    azureFileShare:
+      enabled: false
+      secretName: ''
+      shareName: ''
+    ingress:
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      enabled: false
+      host: ''
+      ingressClassName: ''
+      path: /
+      secretName: ''
+      tls: false
+    certificate:
+      keyFile: tls.key
+      pemFile: tls.pem
+      secret: ''
+    disruptionbudget: 0
+    configmap:
+      data: ''
+      enabled: false
+    image: registry.connect.redhat.com/neuvector/controller
+    replicas: 3
+    tolerations: []
+    pvc:
+      accessModes:
+        - ReadWriteMany
+      capacity: ''
+      enabled: false
+      existingClaim: false
+      storageClass: ''
+    ranchersso:
+      enabled: false
+    priorityClassName: ''
+    podAnnotations: {}
